@@ -1,7 +1,7 @@
 // =========================================================================
 // TEMPELKAN URL WEB APP GOOGLE SCRIPT ANDA DI ANTARA TANDA KUTIP DI BAWAH INI:
 // =========================================================================
-const SCRIPT_URL = "";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxlxY6leORa18CaKmBDgg54JSvMKyVrno5r1BhHXHipGdgnEX4Lw2OuuW9XA_P80szejQ/exec";
 
 let tipeAktif = 'masuk';
 let transaksiList = JSON.parse(localStorage.getItem('dompetku_transaksi')) || [];
@@ -94,7 +94,7 @@ async function tambahTransaksi(e) {
     updateUI();
 
     // Kirim otomatis ke Google Sheets
-    if (SCRIPT_URL && SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbyWsNvFiTzjC_otNvcx3BK7lq0gQG_3wSxdK4YaLgKI0kcEzhfHo6lZgM4ho6oqIZvzVg/exec") {
+    if (SCRIPT_URL && SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbxlxY6leORa18CaKmBDgg54JSvMKyVrno5r1BhHXHipGdgnEX4Lw2OuuW9XA_P80szejQ/exec") {
         kirimKeGoogleSheets(dataBaru);
     }
 }
