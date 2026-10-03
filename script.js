@@ -1,7 +1,7 @@
 // =========================================================================
 // TEMPELKAN URL WEB APP GOOGLE SCRIPT ANDA DI ANTARA TANDA KUTIP DI BAWAH INI:
 // =========================================================================
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxlxY6leORa18CaKmBDgg54JSvMKyVrno5r1BhHXHipGdgnEX4Lw2OuuW9XA_P80szejQ/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyjnUC0h5f-9Gwo3KHYq1WXloRBAHkBFXseRo7gv6qTNn1Ak4lSKfOFQAOsLOiNWuLRNA/exec";
 
 let tipeAktif = 'masuk';
 let transaksiList = JSON.parse(localStorage.getItem('dompetku_transaksi')) || [];
