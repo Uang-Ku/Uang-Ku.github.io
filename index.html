@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dompetku - Keuangan Pintar</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- CSS Kustom Terpisah -->
+    <link rel="stylesheet" href="style.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emeraldDark: '#064e3b',
+                        emeraldBase: '#047857',
+                        goldAccent: '#d97706',
+                        darkBg: '#0f172a',
+                        cardBg: '#1e293b'
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-darkBg text-slate-100 min-h-screen font-sans pb-12">
+
+    <!-- Navbar -->
+    <header class="bg-cardBg border-b border-slate-800 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-emeraldBase p-2 rounded-xl text-white shadow-lg shadow-emerald-900/40">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <h1 class="text-xl font-bold tracking-wide text-white">Dompet<span class="text-goldAccent">ku</span></h1>
+            </div>
+            <div id="syncStatus" class="text-xs px-3 py-1.5 rounded-full bg-slate-800 border border-slate-700 text-slate-400 flex items-center space-x-1.5">
+                <span class="w-2 h-2 rounded-full bg-amber-500" id="syncDot"></span>
+                <span id="syncText">Siap Sinkronisasi</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- KOLOM KIRI: Form & Ringkasan -->
+        <div class="space-y-6">
+            
+            <!-- Kartu Saldo Utama -->
+            <div class="bg-gradient-to-br from-cardBg to-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl"></div>
+                <p class="text-slate-400 text-sm font-medium">Total Saldo Bersih</p>
+                <h2 id="totalSaldo" class="text-3xl font-extrabold text-white mt-1">Rp 0</h2>
+                
+                <div class="grid grid-cols-2 gap-4 mt-6 pt-6 border-t border-slate-800/80">
+                    <div>
+                        <p class="text-xs text-slate-400">Pemasukan</p>
+                        <p id="totalMasuk" class="text-emerald-400 font-bold text-lg mt-0.5">Rp 0</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-400">Pengeluaran</p>
+                        <p id="totalKeluar" class="text-rose-400 font-bold text-lg mt-0.5">Rp 0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Tambah Transaksi -->
+            <div class="bg-cardBg border border-slate-800 p-6 rounded-2xl shadow-xl">
+                <h3 class="text-lg font-bold text-white mb-4">Catat Transaksi Baru</h3>
+                
+                <!-- Pilihan Tipe -->
+                <div class="grid grid-cols-2 gap-2 p-1 bg-slate-900 rounded-xl mb-4 border border-slate-800">
+                    <button type="button" id="btnMasuk" onclick="setTipe('masuk')" class="py-2.5 text-sm font-semibold rounded-lg bg-emeraldBase text-white transition-all shadow">Pemasukan</button>
+                    <button type="button" id="btnKeluar" onclick="setTipe('keluar')" class="py-2.5 text-sm font-semibold rounded-lg text-slate-400 transition-all hover:text-white">Pengeluaran</button>
+                </div>
+
+                <form id="formTransaksi" onsubmit="tambahTransaksi(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Nominal (Rp)</label>
+                        <input type="text" id="nominal" required placeholder="Contoh: 50.000" onkeyup="formatRupiahInput(this)" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500 transition-all font-semibold">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Kategori</label>
+                        <select id="kategori" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500 transition-all">
+                            <!-- Diisi via Javascript -->
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Tanggal</label>
+                        <input type="date" id="tanggal" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500 transition-all">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Catatan / Keterangan</label>
+                        <input type="text" id="catatan" placeholder="Misal: Gaji bulanan, Beli kopi..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-emerald-500 transition-all">
+                    </div>
+
+                    <button type="submit" id="btnSimpan" class="w-full bg-gradient-to-r from-emeraldBase to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-bold py-3 rounded-xl shadow-lg shadow-emerald-900/30 transition-all flex items-center justify-center space-x-2">
+                        <span>Simpan</span>
+                    </button>
+                </form>
+            </div>
+
+        </div>
+
+        <!-- KOLOM KANAN: Grafik & Riwayat -->
+        <div class="lg:col-span-2 space-y-6">
+            
+            <!-- Grafik Analisis -->
+            <div class="bg-cardBg border border-slate-800 p-6 rounded-2xl shadow-xl">
+                <h3 class="text-lg font-bold text-white mb-4">Grafik Pengeluaran per Kategori</h3>
+                <div class="h-64 flex items-center justify-center relative">
+                    <canvas id="expenseChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Daftar Riwayat -->
+            <div class="bg-cardBg border border-slate-800 p-6 rounded-2xl shadow-xl">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                    <h3 class="text-lg font-bold text-white">Riwayat Transaksi</h3>
+                    
+                    <!-- Filter & Pencarian -->
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <select id="filterTipe" onchange="renderRiwayat()" class="bg-slate-900 border border-slate-700 text-xs rounded-xl px-3 py-2 text-white focus:outline-none">
+                            <option value="semua">Semua Tipe</option>
+                            <option value="masuk">Pemasukan</option>
+                            <option value="keluar">Pengeluaran</option>
+                        </select>
+                        <input type="text" id="pencarian" onkeyup="renderRiwayat()" placeholder="Cari catatan..." class="bg-slate-900 border border-slate-700 text-xs rounded-xl px-3 py-2 text-white focus:outline-none w-full sm:w-48">
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-800 text-slate-400 text-xs uppercase tracking-wider">
+                                <th class="pb-3 font-semibold">Tanggal</th>
+                                <th class="pb-3 font-semibold">Kategori</th>
+                                <th class="pb-3 font-semibold">Catatan</th>
+                                <th class="pb-3 font-semibold text-right">Nominal</th>
+                                <th class="pb-3 font-semibold text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelTransaksi" class="divide-y divide-slate-800/60 text-sm">
+                            <!-- Diisi via Javascript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- JavaScript Terpisah -->
+    <script src="script.js"></script>
+</body>
+</html>

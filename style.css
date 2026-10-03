@@ -1,0 +1,26 @@
+/* Styling Kustom Tambahan (Jika Diperlukan) */
+body {
+    background-color: #0f172a;
+    color: #f8fafc;
+}
+
+/* Memastikan transisi halus pada elemen interaktif */
+button, input, select {
+    transition: all 0.2s ease-in-out;
+}
+
+/* Custom Scrollbar untuk tabel riwayat */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+}
