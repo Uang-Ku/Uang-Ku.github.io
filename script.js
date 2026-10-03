@@ -93,8 +93,8 @@ async function tambahTransaksi(e) {
 
     updateUI();
 
-    // Kirim otomatis ke Google Sheets
-    if (SCRIPT_URL && SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbxlxY6leORa18CaKmBDgg54JSvMKyVrno5r1BhHXHipGdgnEX4Lw2OuuW9XA_P80szejQ/exec") {
+  // Kirim otomatis ke Google Sheets
+    if (SCRIPT_URL && SCRIPT_URL.trim() !== "") {
         kirimKeGoogleSheets(dataBaru);
     }
 }
